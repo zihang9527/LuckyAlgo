@@ -12,6 +12,7 @@ from typing import List
     lc1423  k = n - k
     lc2090 半径为k的子数组平均值 k = 2*k+1
     lc2134 最小交换次数把所有1放一起  k = sum(nums)
+    lc1888.使二进制字符串字符交替的最小反转次数   k = len（s），s+=s，核心在于进入和离开的判断
 4、k属于区间[minSize, maxSize]，遍历k的范围，然后计算res
     lc1297
 '''
@@ -360,5 +361,44 @@ class Solution:
         
         return res
                     
-                
+# 1888.使二进制字符串字符交替的最小反转次数   
+class Solution:
+    # 类型1意味滚动数组，s拼接下，然后使用滑动窗口
+    # 滑动窗口与‘010101……’和‘101010……’比较
+    # 离开时判断是否曾经反转过，加入时判断是否需要反转。len（s）奇偶性时，新加入的字符和之前的比较对象不一样，好在target的设计与下标%2的操作
+    # 完美解决了该问题。比如target=01，i=0时与0比较，i+3时与1比较。i+4时与0比较。
+    # targt=‘10’的次数=len（s）- target=‘01’的次数
+    def minFlips(self, s: str) -> int:
+        k = len(s)
+        s += s
+
+        target = '01'
+        res = float('inf')
+        cnt = 0
+        for i, ch in enumerate(s):
+            if ch != target[i % 2]:
+                cnt += 1
+            if i < k - 1:
+                continue
             
+            res = min(res, cnt, k-cnt)
+            # res = min(res, cnt)
+
+            if s[i-k+1] != target[(i-k+1) % 2]:
+                cnt -= 1
+        
+        # target = '10'
+        # # res = float('inf')
+        # cnt = 0
+        # for i, ch in enumerate(s):
+        #     if ch != target[i % 2]:
+        #         cnt += 1
+        #     if i < k - 1:
+        #         continue
+            
+        #     res = min(res, cnt)
+
+        #     if s[i-k+1] != target[(i-k+1) % 2]:
+        #         cnt -= 1
+        
+        return res
